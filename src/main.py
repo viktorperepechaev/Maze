@@ -11,6 +11,43 @@ pygame.init()
 width, height = 800, 600
 fps = 60
 
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("SetComplexity")
+
+# Загружаем шрифт для отображения времени и сообщений
+font = pygame.font.Font(None, 32)
+f = 1
+while f:
+    discription_text = font.render(f'Выберите уровень сложности:', True, (255, 255, 255))
+    F_text = font.render(f'F - стандартный лабиринт, время не ограничено', True, (255, 255, 255))
+    G_text = font.render(f'G - Меняющаяяся скорость игрока, 45 секунд на прохождение', True, (255, 255, 255))
+    H_text = font.render(f'H - Меняющаяяся скорость игрока, 35 секунд на прохождение,', True, (255, 255, 255))
+    H2_text = font.render(f'перестраивающийся лабиринт', True, (255, 255, 255))
+    # Размещение текстов на экране
+    screen.blit(discription_text, (width // 2 - discription_text.get_width() // 2,
+        100))
+    screen.blit(F_text, (50, 200))
+    screen.blit(G_text, (50, 300))
+    screen.blit(H_text, (50, 400))
+    screen.blit(H2_text, (80, 420))
+    pygame.display.flip()
+        
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            # Выходим из игры при закрытии окна
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_f:
+                complexity = 1
+                f = 0
+            elif event.key == pygame.K_g:
+                complexity = 2
+                f = 0
+            elif event.key == pygame.K_h:
+                complexity = 3
+                f = 0
+
 # Размер одной клетки лабиринта в пикселях
 maze_cell_size = 15
 
@@ -18,9 +55,6 @@ maze_cell_size = 15
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Maze")
 clock = pygame.time.Clock()
-
-# Загружаем шрифт для отображения времени и сообщений
-font = pygame.font.Font(None, 36)
 
 # Интервал между шагами движения
 interval = 0.15  # Время между перемещениями в секундах
@@ -38,7 +72,9 @@ solved_time = None
 solved = False
 
 # Главный игровой цикл
+
 while True:
+	
     # Обрабатываем события окна
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
