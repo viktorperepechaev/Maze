@@ -178,9 +178,9 @@ class Maze:
         for y in range(self.height):
             for x in range(self.width):
                 if self.maze[y][x] == 1:
-                    color = (255, 255, 255)  # Стена (белый цвет)
+                    color = (108, 60, 12)  # Стена (коричневый цвет)
                 else:
-                    color = (0, 0, 0)  # Путь (чёрный цвет)
+                    color = (0, 127, 0)  # Путь (зеленый цвет)
 
                 if (x, y) == (self.p_pos_x, self.p_pos_y):
                     color = (255, 0, 0)  # Игрок (красный цвет)
@@ -188,6 +188,6 @@ class Maze:
                     color = (255, 127, 0)  # Выход (оранжевый цвет)
                 elif self.p_path[y][x] == 1:
                     # Если путь, то тёмно-зелёным
-                    color = (0, 127, 0)
+                    color = (154, 205, 50)
                 
                 pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))

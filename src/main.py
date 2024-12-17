@@ -2,6 +2,7 @@ import pygame
 import random
 import sys
 
+from ComplexityManager import ComplexityManager
 from Maze import Maze
 
 # Инициализация Pygame
@@ -11,49 +12,18 @@ pygame.init()
 width, height = 800, 600
 fps = 60
 
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("SetComplexity")
+manager = ComplexityManager(width, height)
+complexity = manager.toMenu()
 
 # Загружаем шрифт для отображения времени и сообщений
 font = pygame.font.Font(None, 32)
-f = 1
-while f:
-    discription_text = font.render(f'Выберите уровень сложности:', True, (255, 255, 255))
-    F_text = font.render(f'F - стандартный лабиринт, время не ограничено', True, (255, 255, 255))
-    G_text = font.render(f'G - Меняющаяяся скорость игрока, 45 секунд на прохождение', True, (255, 255, 255))
-    H_text = font.render(f'H - Меняющаяяся скорость игрока, 35 секунд на прохождение,', True, (255, 255, 255))
-    H2_text = font.render(f'перестраивающийся лабиринт', True, (255, 255, 255))
-    # Размещение текстов на экране
-    screen.blit(discription_text, (width // 2 - discription_text.get_width() // 2,
-        100))
-    screen.blit(F_text, (50, 200))
-    screen.blit(G_text, (50, 300))
-    screen.blit(H_text, (50, 400))
-    screen.blit(H2_text, (80, 420))
-    pygame.display.flip()
-        
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            # Выходим из игры при закрытии окна
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_f:
-                complexity = 1
-                f = 0
-            elif event.key == pygame.K_g:
-                complexity = 2
-                f = 0
-            elif event.key == pygame.K_h:
-                complexity = 3
-                f = 0
 
 # Размер одной клетки лабиринта в пикселях
 maze_cell_size = 15
 
 # Создаём окно
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Maze")
+pygame.display.set_caption(f"Maze({complexity})")
 clock = pygame.time.Clock()
 
 # Интервал между шагами движения
@@ -87,6 +57,14 @@ while True:
                 last = interval + 1
             elif event.key == pygame.K_SPACE:
                 # Перезапуск лабиринта
+                maze.reset()
+                maze.generate()
+                start_time = pygame.time.get_ticks()
+                solved_time = None
+                solved = False
+            elif event.key == pygame.K_r:
+                complexity = manager.toMenu()
+                pygame.display.set_caption(f"Maze({complexity})")
                 maze.reset()
                 maze.generate()
                 start_time = pygame.time.get_ticks()
@@ -127,7 +105,11 @@ while True:
         # Вычисление и отображение времени прохождения
         solving_time = (pygame.time.get_ticks() - start_time) / 1000
         time_text = font.render(f'{solving_time:.2f}', True, (255, 255, 255))
+        r_text = font.render(f'R - выбор сложности', True, (255, 255, 255))
+        space_text = font.render(f'Space - рестарт', True, (255, 255, 255))
+        screen.blit(r_text, (width // 2 - time_text.get_width() // 2 - r_text.get_width() - 80, height - 50))
         screen.blit(time_text, (width // 2 - time_text.get_width() // 2, height - 50))
+        screen.blit(space_text, (width // 2 - time_text.get_width() // 2 + 120, height - 50))
     else:
         # Отображение экрана победы
         solving_time = (solved_time - start_time) / 1000
@@ -136,7 +118,7 @@ while True:
         won_text = font.render(f'Победа!', True, (255, 255, 255))
         time_text = font.render(f'{solving_time:.2f}s', True, (255, 255, 255))
         restart_text = font.render(f'Нажмите пробел для перезапуска', True, (255, 255, 255))
-
+        select_text = font.render(f'Нажмите R для выбора сложности', True, (255, 255, 255))
         # Размещение текстов на экране
         screen.blit(won_text, (width // 2 - won_text.get_width() // 2,
                                height // 2 - won_text.get_height() - time_text.get_height() // 2))
@@ -144,6 +126,8 @@ while True:
                                 height // 2 - time_text.get_height() // 2))
         screen.blit(restart_text, (width // 2 - restart_text.get_width() // 2,
                                    height // 2 + restart_text.get_height() - time_text.get_height() // 2))
+        screen.blit(select_text, (width // 2 - select_text.get_width() // 2,
+                                   height // 2 + restart_text.get_height() + select_text.get_height() - time_text.get_height() // 2))
 
     # Обновляем экран
     pygame.display.flip()
