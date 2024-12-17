@@ -153,10 +153,20 @@ class Maze:
         self.p_pos_x += dx
         self.p_pos_y += dy
 
-        # Проверка на выход за пределы лабиринта или на столкновение со стеной
-        if not (0 <= self.p_pos_x < self.width and 0 <= self.p_pos_y < self.height and self.maze[self.p_pos_y][self.p_pos_x] == 0):
-            self.p_pos_x -= dx
+        # Если переместили в стену или за пределы возвращаем игрока назад
+        if (not (0 <= self.p_pos_y < self.height) or
+                not (0 <= self.p_pos_x < self.width) or
+                (self.maze[self.p_pos_y][self.p_pos_x] != 0)):
             self.p_pos_y -= dy
+            self.p_pos_x -= dx
+            return
+        
+        if self.p_path[self.p_pos_y][self.p_pos_x] == 0:
+            # Если перешли на клетку на которой нет пути игрока, то прошлая клетка путь игрока
+            self.p_path[self.p_pos_y - dy][self.p_pos_x - dx] = 1
+        elif self.p_path[self.p_pos_y][self.p_pos_x] == 1:
+            # Если перешли на клетку на которой есть путь игрока, то игрок идёт назад, удаляем путь
+            self.p_path[self.p_pos_y - dy][self.p_pos_x - dx] = 0
 
     def draw(self, screen, cell_size):
         """
@@ -176,5 +186,8 @@ class Maze:
                     color = (255, 0, 0)  # Игрок (красный цвет)
                 elif (x, y) == (self.g_pos_x, self.g_pos_y):
                     color = (255, 127, 0)  # Выход (оранжевый цвет)
+                elif self.p_path[y][x] == 1:
+                    # Если путь, то тёмно-зелёным
+                    color = (0, 127, 0)
                 
                 pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))

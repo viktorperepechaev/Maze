@@ -1,4 +1,5 @@
 import pygame
+import random
 import sys
 
 from Maze import Maze
@@ -48,8 +49,8 @@ while True:
             if event.key in [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]:
                 # При нажатии клавиш W, A, S или D сразу выполняем движение
                 last = interval + 1
-            elif event.key == pygame.K_SPACE and solved:
-                # Перезапуск лабиринта после завершения
+            elif event.key == pygame.K_SPACE:
+                # Перезапуск лабиринта
                 maze.reset()
                 maze.generate()
                 start_time = pygame.time.get_ticks()
