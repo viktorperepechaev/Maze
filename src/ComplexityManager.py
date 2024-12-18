@@ -40,4 +40,5 @@ class ComplexityManager:
 					elif event.key == pygame.K_h:
 						complexity = 'H'
 						f = 0
+		pygame.mixer.music.play(-1)
 		return complexity
