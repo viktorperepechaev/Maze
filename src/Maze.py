@@ -3,7 +3,7 @@ from collections import deque
 import pygame
 
 class Maze:
-    def __init__(self, width, height):
+    def __init__(self, width, height, player_image=None):
         """
         Инициализация класса лабиринта.
         
@@ -12,6 +12,7 @@ class Maze:
         """
         self.width = width
         self.height = height
+        self.player_image = player_image
 
         # Начальное положение игрока (в левом верхнем углу)
         self.p_pos_x = 0
@@ -182,12 +183,19 @@ class Maze:
                 else:
                     color = (0, 127, 0)  # Путь (зеленый цвет)
 
-                if (x, y) == (self.p_pos_x, self.p_pos_y):
-                    color = (255, 0, 0)  # Игрок (красный цвет)
-                elif (x, y) == (self.g_pos_x, self.g_pos_y):
-                    color = (255, 127, 0)  # Выход (оранжевый цвет)
+                if (x, y) == (self.g_pos_x, self.g_pos_y):
+                    color = (255, 127, 0) # Exit
                 elif self.p_path[y][x] == 1:
-                    # Если путь, то тёмно-зелёным
                     color = (154, 205, 50)
-                
-                pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
+
+                # Draw rect only if it's not the player cell
+                if (x, y) != (self.p_pos_x, self.p_pos_y):
+                    pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
+                else:
+                    # Draw the player image instead of a rect
+                    color = (154, 205, 50)  # Путь (зеленый цвет)
+                    pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
+                    screen.blit(self.player_image, (x * cell_size, y * cell_size))
+                    color = (0, 127, 0)
+
+# color = (154, 205, 50)

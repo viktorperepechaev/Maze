@@ -12,20 +12,13 @@ pygame.init()
 info = pygame.display.Info()
 
 # Размеры окна и частота кадров (FPS)
-width, height = info.current_w, info.current_h
+width, height = 800, 600
+# width, height = info.current_w, info.current_h
 fps = 60
 SCALE = 5  # You can adjust this value to make the pig bigger
 maze_cell_size = 15 * SCALE
 
 font = pygame.font.Font(None, 32)
-
-manager = ComplexityManager(width, height)
-complexity = manager.toMenu()
-
-# Создаём окно
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption(f"Maze({complexity})")
-clock = pygame.time.Clock()
 
 # Load and play background music
 music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "background_music.mp3")
@@ -38,6 +31,14 @@ win_sound_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "asset
 win_sound = pygame.mixer.Sound(win_sound_path)
 win_sound.set_volume(0.5)
 
+manager = ComplexityManager(width, height)
+complexity = manager.toMenu()
+
+# Создаём окно
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption(f"Maze({complexity})")
+clock = pygame.time.Clock()
+
 # Load and scale the player image
 player_image = pygame.image.load("assets/pig.png").convert_alpha()
 player_image = pygame.transform.scale(player_image, (maze_cell_size, maze_cell_size))
@@ -47,7 +48,7 @@ interval = 0.15  # Время между перемещениями в секу�
 last = 0         # Время, прошедшее с последнего движения
 
 # Генерация лабиринта
-maze = Maze(width // maze_cell_size, (height - 50) // maze_cell_size)
+maze = Maze(width // maze_cell_size, (height - 50) // maze_cell_size, player_image=player_image)
 maze.generate()
 
 # Время начала и завершения прохождения лабиринта
@@ -71,16 +72,22 @@ while True:
                 last = interval + 1
             elif event.key == pygame.K_SPACE:
                 # Перезапуск лабиринта
+                win_sound.stop()
+                pygame.mixer.music.stop()
                 maze.reset()
                 maze.generate()
+                pygame.mixer.music.play(-1)
                 start_time = pygame.time.get_ticks()
                 solved_time = None
                 solved = False
             elif event.key == pygame.K_r:
+                win_sound.stop()
+                pygame.mixer.music.stop()
                 complexity = manager.toMenu()
                 pygame.display.set_caption(f"Maze({complexity})")
                 maze.reset()
                 maze.generate()
+                pygame.mixer.music.play(-1)
                 start_time = pygame.time.get_ticks()
                 solved_time = None
                 solved = False
