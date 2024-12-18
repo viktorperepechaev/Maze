@@ -18,7 +18,7 @@ class ComplexityManager:
 			discription_text = font.render(f'Выберите уровень сложности:', True, (255, 255, 255))
 			F_text = font.render(f'F - стандартный лабиринт, время не ограничено', True, (255, 255, 255))
 			G_text = font.render(f'G - 35 секунд на прохождение', True, (255, 255, 255))
-			H_text = font.render(f'H - Меняющаяся скорость игрока, 35 секунд на прохождение,', True, (255, 255, 255))
+			H_text = font.render(f'H - Меняющаяся скорость игрока, 30 секунд на прохождение,', True, (255, 255, 255))
 			H2_text = font.render(f'', True, (255, 255, 255))
 			# Размещение текстов на экране
 			screen.blit(discription_text, (self.width // 2 - discription_text.get_width() // 2, 100))

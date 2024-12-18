@@ -130,7 +130,7 @@ while True:
     # Очистка экрана (заливаем чёрным цветом)
     screen.fill((0, 0, 0))
     if complexity == "G" and solving_time >= 35 or \
-        complexity == "H" and solving_time >= 35:
+        complexity == "H" and solving_time >= 30:
             if not failed:
                 pygame.mixer.music.stop()
                 fail_sound.play()
