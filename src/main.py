@@ -15,7 +15,7 @@ info = pygame.display.Info()
 width, height = 800, 600
 # width, height = info.current_w, info.current_h
 fps = 60
-SCALE = 5  # You can adjust this value to make the pig bigger
+SCALE = 1  # You can adjust this value to make the pig bigger
 maze_cell_size = 15 * SCALE
 
 font = pygame.font.Font(None, 32)
@@ -91,7 +91,8 @@ while True:
                 start_time = pygame.time.get_ticks()
                 solved_time = None
                 solved = False
-
+    if complexity == "H":
+        interval = random.randint(1, 150) / 1000
     if not solved:
         # Логика для незавершённого лабиринта
 
@@ -118,10 +119,27 @@ while True:
 
             last = 0
 
+    solving_time = (pygame.time.get_ticks() - start_time) / 1000
     # Очистка экрана (заливаем чёрным цветом)
     screen.fill((0, 0, 0))
-
-    if not solved:
+    if complexity == "G" and solving_time >= 35 or \
+        complexity == "H" and solving_time >= 35:
+            pygame.mixer.music.stop()
+            # Сообщение о поражении
+            won_text = font.render(f'Поражение(', True, (255, 255, 255))
+            time_text = font.render(f'Время вышло!', True, (255, 255, 255))
+            restart_text = font.render(f'Нажмите пробел для перезапуска', True, (255, 255, 255))
+            select_text = font.render(f'Нажмите R для выбора сложности', True, (255, 255, 255))
+            # Размещение текстов на экране
+            screen.blit(won_text, (width // 2 - won_text.get_width() // 2,
+                               height // 2 - won_text.get_height() - time_text.get_height() // 2))
+            screen.blit(time_text, (width // 2 - time_text.get_width() // 2,
+                               height // 2 - time_text.get_height() // 2))
+            screen.blit(restart_text, (width // 2 - restart_text.get_width() // 2,
+                               height // 2 + restart_text.get_height() - time_text.get_height() // 2))
+            screen.blit(select_text, (width // 2 - select_text.get_width() // 2,
+                               height // 2 + restart_text.get_height() + select_text.get_height() - time_text.get_height() // 2))
+    elif not solved:
         # Отрисовка лабиринта, если он ещё не пройден
         maze.draw(screen, maze_cell_size)
 
