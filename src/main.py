@@ -13,25 +13,30 @@ info = pygame.display.Info()
 
 # Размеры окна и частота кадров (FPS)
 width, height = 800, 600
-# width, height = info.current_w, info.current_h
 fps = 60
-SCALE = 1  # You can adjust this value to make the pig bigger
+SCALE = 2
 maze_cell_size = 15 * SCALE
 
 font = pygame.font.Font(None, 32)
 
-# Load and play background music
 music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "background_music.mp3")
 pygame.mixer.init()
 pygame.mixer.music.load(music_path)
 pygame.mixer.music.set_volume(0.5)
 
-# Load the win sound
 win_sound_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "winning_sound.mp3")
 win_sound = pygame.mixer.Sound(win_sound_path)
 win_sound.set_volume(0.5)
 
-manager = ComplexityManager(width, height)
+fail_sound_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "fail_music.mp3")
+fail_sound = pygame.mixer.Sound(fail_sound_path)
+fail_sound.set_volume(0.5)
+
+menu_music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "menu_music.mp3")
+menu_music = pygame.mixer.Sound(menu_music_path)
+menu_music.set_volume(0.5)
+
+manager = ComplexityManager(width, height, menu_music=menu_music)
 complexity = manager.toMenu()
 
 # Создаём окно
@@ -39,7 +44,6 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption(f"Maze({complexity})")
 clock = pygame.time.Clock()
 
-# Load and scale the player image
 player_image = pygame.image.load("assets/pig.png").convert_alpha()
 player_image = pygame.transform.scale(player_image, (maze_cell_size, maze_cell_size))
 
@@ -59,9 +63,11 @@ solved_time = None
 solved = False
 
 # Главный игровой цикл
+failed = False
 while True:
     # Обрабатываем события окна
     for event in pygame.event.get():
+        fail_sound.stop()
         if event.type == pygame.QUIT:
             # Выходим из игры при закрытии окна
             pygame.quit()
@@ -76,7 +82,7 @@ while True:
                 pygame.mixer.music.stop()
                 maze.reset()
                 maze.generate()
-                pygame.mixer.music.play(-1)
+                pygame.mixer.music.play()
                 start_time = pygame.time.get_ticks()
                 solved_time = None
                 solved = False
@@ -91,6 +97,7 @@ while True:
                 start_time = pygame.time.get_ticks()
                 solved_time = None
                 solved = False
+                failed = False
     if complexity == "H":
         interval = random.randint(1, 150) / 1000
     if not solved:
@@ -124,7 +131,10 @@ while True:
     screen.fill((0, 0, 0))
     if complexity == "G" and solving_time >= 35 or \
         complexity == "H" and solving_time >= 35:
-            pygame.mixer.music.stop()
+            if not failed:
+                pygame.mixer.music.stop()
+                fail_sound.play()
+                failed = True
             # Сообщение о поражении
             won_text = font.render(f'Поражение(', True, (255, 255, 255))
             time_text = font.render(f'Время вышло!', True, (255, 255, 255))

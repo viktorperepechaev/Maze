@@ -7,8 +7,8 @@ class Maze:
         """
         Инициализация класса лабиринта.
         
-        :param width: Ширина лабиринта в клетках
-        :param height: Высота лабиринта в клетках
+        width: Ширина лабиринта в клетках
+        height: Высота лабиринта в клетках
         """
         self.width = width
         self.height = height
@@ -90,9 +90,9 @@ class Maze:
         """
         Добавить стены вокруг текущей клетки в список для обработки.
         
-        :param x: X координата клетки
-        :param y: Y координата клетки
-        :param walls: Список стен для добавления
+        x: X координата клетки
+        y: Y координата клетки
+        param walls: Список стен для добавления
         """
         for dx, dy in self.directions:
             nx, ny = x + dx, y + dy
@@ -105,8 +105,8 @@ class Maze:
         """
         Найти самую далёкую точку от начальной позиции с помощью поиска в ширину (BFS).
         
-        :param start_x: X координата начальной точки
-        :param start_y: Y координата начальной точки
+        start_x: X координата начальной точки
+        start_y: Y координата начальной точки
         """
         queue = deque([(start_x, start_y, 0)])  # Очередь с начальными координатами и расстоянием
         max_distance = -1
@@ -137,7 +137,7 @@ class Maze:
         """
         Проверить, достиг ли игрок выхода.
         
-        :return: True, если игрок достиг выхода, иначе False
+        return: True, если игрок достиг выхода, иначе False
         """
         return (self.p_pos_x == self.g_pos_x) and (self.p_pos_y == self.g_pos_y)
 
@@ -145,8 +145,8 @@ class Maze:
         """
         Переместить игрока в заданном направлении, если это возможно.
         
-        :param dx: Смещение по оси X
-        :param dy: Смещение по оси Y
+        dx: Смещение по оси X
+        dy: Смещение по оси Y
         """
         if dx == 0 and dy == 0:
             return
@@ -173,8 +173,8 @@ class Maze:
         """
         Отобразить лабиринт на экране.
         
-        :param screen: Экран для отрисовки
-        :param cell_size: Размер клетки в пикселях
+        screen: Экран для отрисовки
+        cell_size: Размер клетки в пикселях
         """
         for y in range(self.height):
             for x in range(self.width):
@@ -188,14 +188,11 @@ class Maze:
                 elif self.p_path[y][x] == 1:
                     color = (154, 205, 50)
 
-                # Draw rect only if it's not the player cell
                 if (x, y) != (self.p_pos_x, self.p_pos_y):
                     pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
                 else:
-                    # Draw the player image instead of a rect
                     color = (154, 205, 50)  # Путь (зеленый цвет)
                     pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
                     screen.blit(self.player_image, (x * cell_size, y * cell_size))
                     color = (0, 127, 0)
 
-# color = (154, 205, 50)

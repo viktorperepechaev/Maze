@@ -2,10 +2,12 @@ import pygame
 import sys
 
 class ComplexityManager:
-	def __init__(self, width, height):
+	def __init__(self, width, height, menu_music):
 		self.width = width
 		self.height = height
+		self.menu_music = menu_music
 	def toMenu(self):
+		self.menu_music.play()
 		pygame.init()
 		pygame.display.set_caption("SetComplexity")
 		font = pygame.font.Font(None, 32)
@@ -40,5 +42,6 @@ class ComplexityManager:
 					elif event.key == pygame.K_h:
 						complexity = 'H'
 						f = 0
+		self.menu_music.stop()
 		pygame.mixer.music.play(-1)
 		return complexity
