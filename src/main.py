@@ -1,18 +1,37 @@
 import pygame
 import random
 import sys
+import os
 
 from Maze import Maze
 
 # Инициализация Pygame
 pygame.init()
 
-# Размеры окна и частота кадров (FPS)
-width, height = 800, 600
+info = pygame.display.Info()
+
+# Constants
+width, height = info.current_w, info.current_h
 fps = 60
+SCALE = 5  # You can adjust this value to make the pig bigger
+maze_cell_size = 15 * SCALE
 
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("SetComplexity")
+pygame.display.set_caption("Maze")
+
+# Load and play background music
+music_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "background_music.mp3")
+pygame.mixer.init()
+pygame.mixer.music.load(music_path)
+pygame.mixer.music.set_volume(0.5)
+
+# Load the win sound
+win_sound_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "winning_sound.mp3")
+win_sound = pygame.mixer.Sound(win_sound_path)
+win_sound.set_volume(0.5)
+# Load and scale the player image
+player_image = pygame.image.load("assets/pig.png").convert_alpha()
+player_image = pygame.transform.scale(player_image, (maze_cell_size, maze_cell_size))
 
 # Загружаем шрифт для отображения времени и сообщений
 font = pygame.font.Font(None, 32)
@@ -31,10 +50,10 @@ while f:
     screen.blit(H_text, (50, 400))
     screen.blit(H2_text, (80, 420))
     pygame.display.flip()
-        
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             # Выходим из игры при закрытии окна
+            win_sound.stop()
             pygame.quit()
             sys.exit()
         elif event.type == pygame.KEYDOWN:
@@ -48,8 +67,6 @@ while f:
                 complexity = 3
                 f = 0
 
-# Размер одной клетки лабиринта в пикселях
-maze_cell_size = 15
 
 # Создаём окно
 screen = pygame.display.set_mode((width, height))
@@ -61,7 +78,7 @@ interval = 0.15  # Время между перемещениями в секу�
 last = 0         # Время, прошедшее с последнего движения
 
 # Генерация лабиринта
-maze = Maze(width // maze_cell_size, (height - 50) // maze_cell_size)
+maze = Maze(width // maze_cell_size, (height - 50) // maze_cell_size, player_image=player_image)
 maze.generate()
 
 # Время начала и завершения прохождения лабиринта
@@ -72,9 +89,8 @@ solved_time = None
 solved = False
 
 # Главный игровой цикл
-
+pygame.mixer.music.play(-1)
 while True:
-	
     # Обрабатываем события окна
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -101,9 +117,9 @@ while True:
 
         if last > interval:
             # Двигаемся в нужном направлении в зависимости от нажатой клавиши
-
             if maze.is_solved():
-                # Если лабиринт пройден, фиксируем время завершения
+                pygame.mixer.music.stop()
+                win_sound.play()
                 solved = True
                 solved_time = pygame.time.get_ticks()
             elif pressed_keys[pygame.K_w]:
